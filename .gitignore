@@ -10,3 +10,5 @@
 *.mcpb
 /packaging/build
 .impeccable/
+/PRODUCT.md
+/PUBLIER.md

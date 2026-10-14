@@ -70,8 +70,6 @@ L'interface reprend les pièces « ui » d'[ascii.rest](https://ascii.rest), ave
 - **Thèmes clair et sombre**, et en petite fenêtre (à côté du jeu, par exemple) la navigation passe dans un tiroir.
 - **Accessible** : tout se fait au clavier (les raccourcis accélèrent, ils ne remplacent rien), focus toujours visible, de vrais boutons radio et de vraies bascules derrière les crochets, animations coupées si le système le demande, contrastes WCAG AA mesurés sur 112 éléments dans les deux thèmes (`tests/ui/ui-contrast.cjs`).
 
-Les principes de l'interface sont décrits dans [`PRODUCT.md`](PRODUCT.md).
-
 ## Au quotidien
 
 | Pour… | Faire |
@@ -298,7 +296,6 @@ Le code est portable : `cargo build --release` sur Linux ou macOS produit l'équ
 | `web/` | l'interface, embarquée dans l'exécutable à la compilation (`app.js` les vues, `clip.js` le presse-papiers, `i18n.js` le dictionnaire anglais) |
 | `tests/ui/` | 6 scénarios navigateur (Puppeteer) : parcours, copier-coller, contrastes, interface en anglais (`ui-i18n.cjs`) ; plus le contrôle statique des traductions (`i18n-check.cjs`). Mode d'emploi : [`tests/ui/LISEZMOI.md`](tests/ui/LISEZMOI.md) |
 | `tests/mcp/` | conformité du serveur MCP, vérifiée par les SDK officiels Python et TypeScript |
-| `PRODUCT.md` | à qui sert l'interface et selon quels principes elle est dessinée |
 
 ## Crédits
 
