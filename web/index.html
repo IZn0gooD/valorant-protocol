@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>protocol</title>
+<meta name="description" data-i18n-attr="content" content="Carnet de coach Valorant : protocoles, setups, exécutions et lineups, map par map.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f6f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131518" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/static/fonts/paper-mono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="modulepreload" href="/static/clip.js">
+<link rel="modulepreload" href="/static/vendor/mount.js">
+<link rel="modulepreload" href="/static/vendor/banner.js">
+<link rel="stylesheet" href="/static/app.css">
+<script src="/static/theme.js"></script>
+<script src="/static/i18n.js"></script>
+<script type="module" src="/static/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#page" id="skip" data-i18n>Aller au contenu</a>
+<header class="bar">
+  <button class="btn menu-btn" type="button" id="menu" aria-controls="side" aria-expanded="false" aria-label="Maps et navigation" data-i18n-attr="aria-label"><span>maps</span></button>
+  <a class="brand" href="#/" aria-label="protocol, accueil" data-i18n-attr="aria-label">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5"/><circle class="dot" cx="12" cy="12" r="2"/></svg>
+    <span>protocol</span>
+  </a>
+  <div class="search input" role="search">
+    <label class="sr" for="find" data-i18n>Rechercher dans les notes</label>
+    <input id="find" type="search" placeholder="rechercher une note, un tag…" data-i18n-attr="placeholder" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="hits">
+    <kbd class="hint" aria-hidden="true">/</kbd>
+  </div>
+  <div class="bar-end" id="barEnd"></div>
+</header>
+<div class="frame">
+  <aside class="side" id="side" aria-label="Navigation du carnet" data-i18n-attr="aria-label">
+    <nav class="tree" id="nav" aria-label="Maps"></nav>
+    <div class="side-foot" id="foot"></div>
+  </aside>
+  <main class="page" id="page" tabindex="-1">
+    <div class="skeleton" aria-hidden="true"><span>░░░░░░░░░░░░</span><span>░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span><span>░░░░░░░░░░░░░░░░░░░░░░░░</span></div>
+    <p class="sr" data-i18n>Chargement…</p>
+  </main>
+</div>
+<div class="scrim" id="scrim" hidden></div>
+<input type="file" id="importFile" accept=".md,.markdown,.txt,text/markdown,text/plain" multiple hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<p class="sr" id="announce" role="status" aria-live="polite"></p>
+<div class="offline" id="offline" role="alert" hidden data-i18n>Le carnet est fermé : relancez protocol pour continuer.</div>
+</body>
+</html>

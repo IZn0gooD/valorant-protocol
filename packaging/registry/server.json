@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.IZn0gooD/valorant-protocol",
+  "title": "protocol — Valorant coach notebook",
+  "description": "Valorant coach notebook: team protocols map by map, match sheets, prompts. Local, private.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/IZn0gooD/valorant-protocol",
+    "source": "github"
+  },
+  "websiteUrl": "https://github.com/IZn0gooD/valorant-protocol",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/IZn0gooD/valorant-protocol/releases/download/v1.0.0/protocol-1.0.0-windows-x64.mcpb",
+      "fileSha256": "REMPLI_PAR_LA_RELEASE",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}

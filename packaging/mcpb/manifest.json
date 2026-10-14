@@ -1,0 +1,80 @@
+{
+  "manifest_version": "0.3",
+  "name": "protocol",
+  "display_name": "protocol — Valorant coach notebook",
+  "version": "1.0.0",
+  "description": "Your Valorant team's protocols, map by map: search, read, match sheets and ready-made prompts. Local, private, nothing irreversible.",
+  "long_description": "protocol is a coach's notebook for Valorant: setups, executes, retakes, lineups and anti-strats, organized map by map in a single local file.\n\nThis extension lets Claude search and read the notebook, pull the match sheet of a map, and run ready-made prompts (summarize a protocol, find its weaknesses, prepare or debrief a match, tidy a pasted text into a note).\n\n**Read-only by default.** Turn on *Allow writing* to let Claude create, update, pin, move or trash notes — nothing is irreversible: a trashed note goes to the notebook's bin, and a rewritten note leaves its previous version there. Writing works even while the protocol window is open.\n\nNo network, no account, no API key: Claude talks to the program on your computer.\n\nprotocol isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.",
+  "author": {
+    "name": "IZn0gooD",
+    "url": "https://github.com/IZn0gooD"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IZn0gooD/valorant-protocol.git"
+  },
+  "homepage": "https://github.com/IZn0gooD/valorant-protocol",
+  "support": "https://github.com/IZn0gooD/valorant-protocol/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "binary",
+    "entry_point": "server/protocol",
+    "mcp_config": {
+      "command": "${__dirname}/server/protocol",
+      "args": ["mcp", "--carnet", "${user_config.carnet}"],
+      "env": {
+        "PROTOCOL_MCP_WRITE": "${user_config.allow_write}"
+      }
+    }
+  },
+  "tools": [
+    { "name": "list_maps", "description": "List the maps, their notes and pinned notes" },
+    { "name": "get_map", "description": "Read a map: overview and notes" },
+    { "name": "list_notes", "description": "List notes by map, type, side, tag or pin" },
+    { "name": "read_note", "description": "Read a full note and its version" },
+    { "name": "search_notes", "description": "Full-text search with filters" },
+    { "name": "match_sheet", "description": "The match sheet of a map: its pinned notes" },
+    { "name": "list_tags", "description": "Tags in use and their counts" },
+    { "name": "recent_notes", "description": "Recently modified notes" },
+    { "name": "format_note", "description": "Format a note or map for Discord, plain text or Markdown" },
+    { "name": "list_trash", "description": "What is in the bin, with restore keys" },
+    { "name": "create_note", "description": "Create a note (writing allowed)" },
+    { "name": "update_note", "description": "Update a note; its previous version goes to the bin (writing allowed)" },
+    { "name": "append_to_note", "description": "Append a passage to a note (writing allowed)" },
+    { "name": "set_pinned", "description": "Pin or unpin a note (writing allowed)" },
+    { "name": "move_note", "description": "Move a note to another map (writing allowed)" },
+    { "name": "trash_note", "description": "Move a note to the bin (writing allowed)" },
+    { "name": "restore_from_trash", "description": "Restore something from the bin (writing allowed)" },
+    { "name": "create_map", "description": "Create a map (writing allowed)" },
+    { "name": "update_map", "description": "Rename a map, set its pool status or rewrite its overview (writing allowed)" }
+  ],
+  "prompts": [
+    { "name": "resumer", "description": "Summarize a protocol for a time-out", "arguments": ["map", "note"], "text": "Summarize protocol ${arguments.note} on ${arguments.map}." },
+    { "name": "failles", "description": "Find a protocol's weaknesses and counters", "arguments": ["map", "note"], "text": "Find the weaknesses of protocol ${arguments.note} on ${arguments.map}." },
+    { "name": "variante", "description": "Suggest a variant of a protocol", "arguments": ["map", "note"], "text": "Suggest a variant of protocol ${arguments.note} on ${arguments.map}." },
+    { "name": "preparer_match", "description": "Prepare a match on a map", "arguments": ["map", "adversaire"], "text": "Prepare the game plan on ${arguments.map}." },
+    { "name": "debrief", "description": "Debrief a match into protocol changes", "arguments": ["map", "observations"], "text": "Debrief this match on ${arguments.map}: ${arguments.observations}" },
+    { "name": "ranger_texte", "description": "Tidy a pasted text into a protocol note", "arguments": ["map", "texte"], "text": "Turn this text into a protocol note for ${arguments.map}: ${arguments.texte}" }
+  ],
+  "tools_generated": false,
+  "prompts_generated": true,
+  "keywords": ["valorant", "esports", "coach", "notes", "strategy", "markdown"],
+  "license": "MIT",
+  "compatibility": {
+    "platforms": ["win32"]
+  },
+  "user_config": {
+    "carnet": {
+      "type": "file",
+      "title": "Notebook file",
+      "description": "Your protocol.carnet file (next to protocol.exe). A new one is created if writing is allowed and the file does not exist yet.",
+      "required": true
+    },
+    "allow_write": {
+      "type": "boolean",
+      "title": "Allow writing",
+      "description": "Let Claude create, update, pin, move or trash notes. Nothing is irreversible: the bin keeps what is removed or rewritten.",
+      "default": false
+    }
+  }
+}

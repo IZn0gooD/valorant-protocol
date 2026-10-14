@@ -1,0 +1,32 @@
+# Tests et analyse à chaque envoi et à chaque demande de fusion, sur les trois systèmes.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Les tests vérifient les textes français : la langue est fixée, quel que soit le système.
+env:
+  PROTOCOL_LANG: fr
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Clippy
+        run: cargo clippy --all-targets --release -- -D warnings
+      - name: Tests
+        run: cargo test --release

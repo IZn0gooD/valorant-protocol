@@ -1,0 +1,41 @@
+protocol — carnet de coach Valorant
+===================================
+
+1. Double-cliquez sur protocol.exe : le carnet s'ouvre dans une fenêtre.
+2. Fermez la fenêtre quand vous avez fini : le programme s'arrête tout seul.
+
+Tout le carnet tient dans un seul fichier, protocol.carnet, créé à côté du
+programme : maps, notes, images, corbeille. Copiez protocol.exe et
+protocol.carnet ensemble sur une clé USB, un dossier partagé ou OneDrive :
+le carnet vous suit. Rien n'est écrit ailleurs sur le poste (la fenêtre
+utilise un profil de navigateur temporaire, effacé à la fermeture).
+
+Un ancien dossier « notes » placé à côté du programme est repris dans le
+carnet au premier lancement, sans être modifié. Il peut ensuite être supprimé.
+
+Copier, coller :
+  - « Copier » sur une note, une map ou la fiche match : collez ensuite
+    dans Discord ou dans Word, Google Docs, Notion (mise en forme gardée).
+  - Ctrl+V sur une page du carnet : un texte copié (Discord, Word, Docs…)
+    devient une nouvelle note, déjà remplie.
+  - Des fichiers .md déposés sur une map y sont importés.
+  - Aide › Votre carnet : tout le carnet en fichiers Markdown (.zip),
+    pour Obsidian ou une sauvegarde lisible partout.
+
+Assistant IA (Claude Desktop, Claude Code) : Aide › Assistant IA (MCP) donne
+  la configuration à copier, en lecture seule ou avec écriture. Rien n'est
+  irréversible : ce que l'assistant retire ou réécrit reste dans la corbeille.
+
+Langue : français ou anglais, selon le système ; Aide › Langue / Language.
+
+Raccourcis : / rechercher · N nouvelle note · E modifier · F fiche match
+             C copier · [ ] changer de map · ? aide
+
+Windows peut afficher un avertissement SmartScreen au premier lancement
+(programme non signé) : « Informations complémentaires », puis « Exécuter
+quand même ».
+
+Ligne de commande : protocol --help
+
+Licence MIT. protocol n'est ni approuvé ni soutenu par Riot Games. Riot Games,
+Valorant et les propriétés associées sont des marques de Riot Games, Inc.

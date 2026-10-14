@@ -1,0 +1,138 @@
+# Une étiquette `v1.2.3` construit protocol pour Windows, Linux et macOS, fabrique les
+# archives et les paquets MCPB, calcule leurs empreintes, remplit la fiche du registre
+# MCP, et range le tout dans une release en BROUILLON : rien n'est publié sans relecture.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+# Les tests vérifient les textes français : la langue est fixée, quel que soit le système.
+env:
+  PROTOCOL_LANG: fr
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows-x64
+            platform: win32
+          - os: ubuntu-22.04
+            name: linux-x64
+            platform: linux
+          - os: macos-14
+            name: macos-universal
+            platform: darwin
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'darwin' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          grep -q "^version = \"$VERSION\"" Cargo.toml || { echo "Cargo.toml n'est pas en version $VERSION"; exit 1; }
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Tests
+        run: cargo test --release
+
+      - name: Construire
+        run: |
+          if [ "${{ matrix.platform }}" = darwin ]; then
+            cargo build --release --target aarch64-apple-darwin
+            cargo build --release --target x86_64-apple-darwin
+            lipo -create -output protocol target/aarch64-apple-darwin/release/protocol target/x86_64-apple-darwin/release/protocol
+          elif [ "${{ matrix.platform }}" = win32 ]; then
+            cargo build --release && cp target/release/protocol.exe protocol.exe
+          else
+            cargo build --release && cp target/release/protocol protocol
+          fi
+
+      - name: Archive
+        run: |
+          STAGE="protocol-$VERSION-${{ matrix.name }}"
+          mkdir -p "out/$STAGE"
+          cp protocol* "out/$STAGE/" 2>/dev/null || true
+          rm -f "out/$STAGE"/*.mcpb
+          cp dist/LISEZMOI.txt dist/README.txt LICENSE README.md README.fr.md CHANGELOG.md "out/$STAGE/"
+          cd out
+          if [ "${{ matrix.platform }}" = win32 ]; then
+            7z a -tzip "$STAGE.zip" "$STAGE" > /dev/null
+          else
+            tar czf "$STAGE.tar.gz" "$STAGE"
+          fi
+          rm -rf "$STAGE"
+
+      - name: Paquet MCPB
+        run: |
+          B=mcpb && mkdir -p "$B/server"
+          cp packaging/mcpb/icon.png LICENSE "$B/"
+          if [ "${{ matrix.platform }}" = win32 ]; then cp protocol.exe "$B/server/"; else cp protocol "$B/server/"; fi
+          node -e '
+            const fs = require("fs");
+            const m = JSON.parse(fs.readFileSync("packaging/mcpb/manifest.json", "utf8"));
+            m.version = process.env.VERSION;
+            m.compatibility = { ...m.compatibility, platforms: [process.argv[1]] };
+            fs.writeFileSync("mcpb/manifest.json", JSON.stringify(m, null, 2));
+          ' "${{ matrix.platform }}"
+          npx -y @anthropic-ai/mcpb validate mcpb/manifest.json
+          npx -y @anthropic-ai/mcpb pack mcpb "out/protocol-$VERSION-${{ matrix.name }}.mcpb"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: out/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Empreintes et fiche du registre
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          cd out && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt && cd ..
+          node -e '
+            const fs = require("fs");
+            const [version, tag, repo] = process.argv.slice(1);
+            const sums = Object.fromEntries(fs.readFileSync("out/SHA256SUMS.txt", "utf8").trim().split("\n").map((l) => l.split(/\s+\*?/).reverse()));
+            const s = JSON.parse(fs.readFileSync("packaging/registry/server.json", "utf8"));
+            s.version = version;
+            s.packages = Object.keys(sums).filter((f) => f.endsWith(".mcpb")).sort().map((f) => ({
+              registryType: "mcpb",
+              identifier: `https://github.com/${repo}/releases/download/${tag}/${f}`,
+              fileSha256: sums[f],
+              transport: { type: "stdio" },
+            }));
+            fs.writeFileSync("out/server.json", JSON.stringify(s, null, 2) + "\n");
+          ' "$VERSION" "$GITHUB_REF_NAME" "$GITHUB_REPOSITORY"
+          cat out/server.json
+      - name: Release en brouillon
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" {on=1; next} on && /^## \[/ {exit} on' CHANGELOG.md > notes.md
+          gh release create "$GITHUB_REF_NAME" out/* --draft --title "protocol $VERSION" --notes-file notes.md

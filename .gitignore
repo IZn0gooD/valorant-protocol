@@ -1,0 +1,12 @@
+/target
+/dist/notes
+/notes
+/tests/ui/shots
+/dist/*.exe
+/dist/protocol
+/dist/*.carnet*
+/dist/.protocol-session
+*.carnet
+*.mcpb
+/packaging/build
+.impeccable/

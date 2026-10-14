@@ -1,0 +1,28 @@
+[package]
+name = "protocol"
+version = "1.0.0"
+edition = "2024"
+description = "Carnet de coach Valorant : protocoles, setups, exécutions et lineups, rangés map par map."
+license = "MIT"
+publish = false
+repository = "https://github.com/IZn0gooD/valorant-protocol"
+homepage = "https://github.com/IZn0gooD/valorant-protocol"
+
+[lib]
+name = "protocol"
+path = "src/lib.rs"
+
+[[bin]]
+name = "protocol"
+path = "src/main.rs"
+
+[dependencies]
+# Le rendu Markdown (CommonMark + GFM), sans getopts.
+pulldown-cmark = { version = "0.13.4", default-features = false, features = ["html"] }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+# panic = "unwind" volontairement : une requête qui panique ne tue que son thread, pas le serveur.
